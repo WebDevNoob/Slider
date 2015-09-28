@@ -1,47 +1,56 @@
-var sliderNext = 0;
-$(document).ready(function () {
-    $("#slider > img").first().fadeIn(300);
-    startSlider();
-});
+"use strict";
+var sliderNext = 1, loop;
+/*global $, jQuery*/
 
-function startSlider() {
+function boundDisplay() {
+    if (sliderNext > (($("#slider > img").size() - 1))) {
+        sliderNext = 0;
+    } else if (sliderNext < 0) {
+        sliderNext = (($("#slider > img").size() - 1));
+    }
+    $("#slider > img").fadeOut(300);
+    $("#slider > img#" + sliderNext).fadeIn(300);
+    sliderNext = sliderNext + 1;
+}
+function showSlide() {
+    if (loop) {
+        window.clearInterval(loop);
+        boundDisplay();
+    }
     loop = setInterval(function () {
-        sliderNext = sliderNext + 1;
-        if (sliderNext > (($("#slider > img").size() - 1))) {
-            sliderNext = 0;
-        }
-        $("#slider > img").fadeOut(300);
-        $("#slider > img#" + sliderNext).fadeIn(300);
+        boundDisplay();
     }, 3000);
 }
-
-function prev(){
-    showSlide((sliderNext - 1));
-    console.log(sliderNext);
-};   
-function next(){
-    showSlide((sliderNext + 1));
-    console.log(sliderNext);
-};
-
-function showSlide(arg){
+$(document).ready(function () {
+    $("#slider > img").first().fadeIn(300);
+    showSlide();
+});
+function prev() {
+    sliderNext = sliderNext - 2;
+    showSlide();
+}
+function next() {
+    showSlide();
+}
+$("#slider > img").hover(function () {
     window.clearInterval(loop);
-        if (arg > (($("#slider > img").size() - 1))) {
-            arg = 0;
-        }else if (arg < 1) {
-            arg = (($("#slider > img").size() - 1));
-        }
-        $("#slider > img").fadeOut(300);
-        $("#slider > img#" + arg).fadeIn(300);
-    sliderNext = arg;
-    startSlider();
-}   
-
-$("#slider > img").hover(
-    function(){
-        window.clearInterval(loop);
-    },
-    function(){
-        startSlider();
+},
+    function () {
+        loop = 0;
+        showSlide();
     });
-
+$("#slider > img").mousedown(function (event) {
+    switch (event.which) {
+    case 1:
+        boundDisplay();
+        break;
+    case 2:
+        break;
+    case 3:
+        sliderNext = sliderNext - 2;
+        boundDisplay();
+        break;
+    default:
+        break;
+    }
+});
